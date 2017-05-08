@@ -1,0 +1,32 @@
+首先 导入spring jar包
+ 我们知道spring最大的功能就是ioc和aop 是帮助我们管理beans的
+1.spring 核心包
+  core
+  context
+  beans
+  expression 表达式
+  web
+
+tips: 
+	1.spring不重复写已经有的很好的工具包 比如commons-logging 我们需要自己下载导入
+
+
+一.使用spring框架 自然是先要在 web.xml 配置spring
+ <listener>
+ <context-param>   <K, V>
+ 		类路径
+ 		<param-value>/WEB-INF/classes/applicationContext.xml</param-value>
+		<param-value>classpath:applicationContext*.xml</param-value>
+		classpath: src下的java文件 会被编译到classes文件夹下,  tomcat启动的时候会加载classes文件夹下的字节码文件
+		
+ 1.我们知道 tomcat 在启动的时候 先会读取 web.xml配置文件中的两个节点<listener>和<contex-param>。
+ 2.接着创建ServletContext 将<context-param>转化为键值对,并交给ServletContext。
+ 3.容器创建<listener></listener>中的类实例,即创建监听
+ 
+如何使用
+jsp页面中
+	${initParam.contextConfigLocation}
+Servlet中
+	String paramValue=getServletContext().getInitParameter("contextConfigLocation")
+
+二.配置spring的主要配置文件applicationContext.xml  这个文件名要记住 约定大于配置
