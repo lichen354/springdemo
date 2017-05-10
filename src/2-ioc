@@ -23,3 +23,57 @@ p 标签
 	<bean id="person" class="" p:age="21" p:car-ref="tool"/>  
 
 annotation
+	2.5版本开始引入注解 简化xml配置
+	xml中配置扫描路径
+	使用注解
+	一、自动装配
+ 	@Autowired byType  需要配置支持autowire的类 
+ 	 	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"></bean>
+ 	
+		1.这个bean不存在 @Autowired(required = false)   很少用到
+		2.存在多个bean  @Qualifier("beanId")
+			|- 修饰成员
+			|- 修饰参数
+		
+	@Resource byName 
+		<bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+		@Reasource(name="")
+		
+		@PostConstruct  Bean 初始化后执行
+		@PreDestroy Bean 销毁之前被 Spring 容器执行了。
+	
+	
+	<context:annotation-config/> 简化配置	需要加入spring-aop jar包
+		|-<context:annotationconfig/> 将隐式地向 Spring 容器注册 
+				AutowiredAnnotationBeanPostProcessor、
+				CommonAnnotationBeanPostProcessor、
+				PersistenceAnnotationBeanPostProcessor 
+				equiredAnnotationBeanPostProcessor 这 4 个 BeanPostProcessor。
+		|-在配置文件中使用 context 命名空间之前，必须在 <beans> 元素中声明 context 命名空间。
+	
+	二、bean声明
+	
+	@Component 是一个泛化的概念，仅仅表示一个组件 (Bean) ，可以作用在任何层次。 
+		@Component("beanID") 默认是类名首字母小写; 也可以自己指定beanId
+	@Service 通常作用在业务层，但是目前该功能与 @Component 相同。
+	@Constroller 通常作用在控制层，但是目前该功能与 @Component 相同
+	@Repository 只能标注在 DAO 类上 这是因为该注解的作用不只是将类识别为 Bean，同时它还能将所标注的类中抛出的数据访问异常封装为 Spring 的数据访问异常类型。 
+		Spring 本身提供了一个丰富的并且是与具体的数据访问技术无关的数据访问异常结构，用于封装不同的持久层框架抛出的异常，使得异常独立于底层的框架。
+		
+		
+	<context:component-scan base-package="com.baobaotao"/>	
+	作用域
+	@Scope("prototype")
+	
+	
+是否有了这些 IOC 注释，我们就可以完全摒除原来 XML 配置的方式呢？答案是否定的。有以下几点原因：
+	注释配置不一定在先天上优于 XML 配置。如果 Bean 的依赖关系是固定的，（如 Service 使用了哪几个 DAO 类），这种配置信息不会在部署时发生调整，
+	那么注释配置优于 XML 配置；反之如果这种依赖关系会在部署时发生调整，XML 配置显然又优于注释配置，因为注释是对 Java 源代码的调整，
+	您需要重新改写源代码并重新编译才可以实施调整。
+
+	如果 Bean 不是自己编写的类（如 JdbcTemplate、SessionFactoryBean 等），注释配置将无法实施，此时 XML 配置是唯一可用的方式。
+	注释配置往往是类级别的，而 XML 配置则可以表现得更加灵活。比如相比于 @Transaction 事务注释，使用 aop/tx 命名空间的事务配置更加灵活和简单。
+	
+所以在实现应用中，我们往往需要同时使用注释配置和 XML 配置，对于类级别且不会发生变动的配置可以优先考虑注释配置；
+而对于那些第三方类以及容易发生调整的配置则应优先考虑使用 XML 配置。Spring 会在具体实施 Bean 创建和 Bean 注入之前将这两种配置方式的元信息融合在一起。
+	
